@@ -16,8 +16,13 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -32,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
     private EditText editText;
     private ImageView mImageView;
-
+    private ListView listViewImage;
+    private String[] tableauChaines;
     /**
      * Instantiation des données à la création du composant
      */
@@ -57,6 +63,25 @@ public class MainActivity extends AppCompatActivity {
         // Lie le service
         Intent intent = new Intent(this, NotreServiceDeTelechargement.class);
         bindService(intent, maConnexion, Context.BIND_AUTO_CREATE);
+
+        //Récupération de la listView
+        listViewImage = findViewById(R.id.listViewImage);
+
+        //récuperation des urls des image
+        tableauChaines = getResources().getStringArray(R.array.tableau_image);
+
+        //adapter fais le lien entre la liste et le tableau d'image
+        ArrayAdapter<String> monArrayAdapter = new ArrayAdapter(this, R.layout.descripteur_liste_image, R.id.tv_url_image, tableauChaines);
+        listViewImage.setAdapter(monArrayAdapter);
+
+        listViewImage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String chaineSelectionnee = tableauChaines[position];
+                Toast.makeText(view.getContext(), chaineSelectionnee, Toast.LENGTH_LONG).show();
+
+            }
+        });
     }
 
 
@@ -129,5 +154,12 @@ public class MainActivity extends AppCompatActivity {
      */
     public void DemanderTelechargement(View view) {
         this.notreServiceTelechargement.executeUneTacheDeTelechargement(editText.getText().toString());
+    }
+
+    public void DemanderTelechargementItemListView(View view) {
+        this.notreServiceTelechargement.executeUneTacheDeTelechargement(((TextView) ((LinearLayout) view.getParent()).getChildAt(1)).getText().toString());
+        //Toast.makeText(view.getContext(),"click", Toast.LENGTH_LONG).show();
+        mImageView = (ImageView) ((LinearLayout) view.getParent()).getChildAt(0);
+        Log.i("LogRemiViewParent", ((TextView) ((LinearLayout) view.getParent()).getChildAt(1)).getText().toString());
     }
 }
