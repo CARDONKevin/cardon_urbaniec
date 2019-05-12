@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tableau_image">
+        <item>https://lagbt.wiwiland.net/images/c/cb/Epee_courte.png</item>
+        <item>https://i0.wp.com/ps4vita.fr/wp-content/uploads/2017/07/Code-geass.jpg</item>
+        <item>https://animemotivation.com/wp-content/uploads/2017/09/Code-Geass-anime-2.jpg.webp</item>
+        <item>https://icon2.kisspng.com/20180618/oau/kisspng-yu-gi-oh-duel-links-yu-gi-oh-trading-card-game-d-yugioh-duel-generation-5b27dca32e10b5.1074848915293390431887.jpg</item>
+        <item>https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/06cb28af-a15c-45d3-b1b6-fcbc1910e0c3/dbvnyk0-bb88e4de-44b6-499a-9fe4-0386ba99953f.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzA2Y2IyOGFmLWExNWMtNDVkMy1iMWI2LWZjYmMxOTEwZTBjM1wvZGJ2bnlrMC1iYjg4ZTRkZS00NGI2LTQ5OWEtOWZlNC0wMzg2YmE5OTk1M2YucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.odfI-QzNiv5IhJ7Au0PVLGfDQDcw1KO_rZOU6HPwMME</item>
+
+    </string-array>
+</resources>
