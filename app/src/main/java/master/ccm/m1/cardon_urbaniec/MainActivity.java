@@ -1,6 +1,7 @@
 package master.ccm.m1.cardon_urbaniec;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
@@ -15,15 +16,21 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.HashMap;
 
 /**
  * Activité principale de l'application
@@ -38,7 +45,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText editText;
     private ImageView mImageView;
     private ListView listViewImage;
+    private Button boutonTelechargerListeChecked;
     private String[] tableauChaines;
+    private HashMap<String, ImageView> mapImageViewAppartenantUrl;
     /**
      * Instantiation des données à la création du composant
      */
@@ -47,8 +56,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mapImageViewAppartenantUrl = new HashMap<>();
+
         // affectation des objets de la vue
-        mImageView = findViewById(R.id.imageView_image_afficher);
         editText = findViewById(R.id.editText_url_download);
 
         // initialise l'objet pour notre loader (Progres Dialog)
@@ -72,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
         //adapter fais le lien entre la liste et le tableau d'image
         ArrayAdapter<String> monArrayAdapter = new ArrayAdapter(this, R.layout.descripteur_liste_image, R.id.tv_url_image, tableauChaines);
+        listViewImage.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         listViewImage.setAdapter(monArrayAdapter);
 
         listViewImage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -82,6 +93,29 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        boutonTelechargerListeChecked = findViewById(R.id.id_btn_telecharger_list_view_items);
+        boutonTelechargerListeChecked.setEnabled(false);
+
+        boutonTelechargerListeChecked.setOnClickListener(new Button.OnClickListener(){
+            @Override
+
+            public void onClick(View v) {
+                ListView notreLayout=  findViewById(R.id.listViewImage);
+                int count = notreLayout.getChildCount();
+
+                for (int i = 0; i < count; i++) {
+                    View contenenurdeCheckBoxes = notreLayout.getChildAt(i);
+                    View childCheckBox = ((ViewGroup) contenenurdeCheckBoxes).getChildAt(2);
+                    if (childCheckBox instanceof AppCompatCheckBox) {
+                        if (childCheckBox.isSelected()){
+                            DemanderTelechargementItemListView(childCheckBox);
+                           // TextView url = (TextView) ((ViewGroup) contenenurdeCheckBoxes).getChildAt(1);
+                           // Toast.makeText(v.getContext(), url.getText(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            }});
     }
 
 
@@ -136,8 +170,9 @@ public class MainActivity extends AppCompatActivity {
         if (result != null) {
             // Sauvegarde l'image dans le stockage
             Uri imageInternalUri = this.notreServiceTelechargement.saveImageToInternalStorage(result);
+            Toast.makeText(this, "url : "+imageInternalUri.toString(), Toast.LENGTH_LONG).show();
             // affecte l'image télécharger
-            mImageView.setImageURI(imageInternalUri);
+            ((ImageView) this.mapImageViewAppartenantUrl.get(notreServiceTelechargement.getUrlDuBitmapConcerne(result))).setImageURI(imageInternalUri);
         } else {
             // Notifie l'utilisateur en cas d'erreur de téléchargement
             Toast.makeText(this, "Error with the download of your image", Toast.LENGTH_LONG).show();
@@ -157,9 +192,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void DemanderTelechargementItemListView(View view) {
-        this.notreServiceTelechargement.executeUneTacheDeTelechargement(((TextView) ((LinearLayout) view.getParent()).getChildAt(1)).getText().toString());
-        //Toast.makeText(view.getContext(),"click", Toast.LENGTH_LONG).show();
+        String url = ((TextView) ((LinearLayout) view.getParent()).getChildAt(1)).getText().toString();
+        this.notreServiceTelechargement.executeUneTacheDeTelechargement(url);
         mImageView = (ImageView) ((LinearLayout) view.getParent()).getChildAt(0);
-        Log.i("LogRemiViewParent", ((TextView) ((LinearLayout) view.getParent()).getChildAt(1)).getText().toString());
+
+        url = url.replace("/", "");
+
+        if (url.length() >= 260){
+            url = url.substring(0, 250);
+        }
+        this.mapImageViewAppartenantUrl.put(url, mImageView);
+    }
+
+    public void ChangeStatus(View view) {
+        CheckBox cb = (CheckBox) view;
+        cb.setSelected(!cb.isSelected());
+        boolean siUneCaseEstCache = false;
+        ListView notreLayout=  findViewById(R.id.listViewImage);
+        int count = notreLayout.getChildCount();
+
+        for (int i = 0; i < count; i++) {
+            View contenenurdeCheckBoxes = notreLayout.getChildAt(i);
+            View childCheckBox = ((ViewGroup) contenenurdeCheckBoxes).getChildAt(2);
+            if (childCheckBox instanceof AppCompatCheckBox) {
+                if (childCheckBox.isSelected()){
+                    siUneCaseEstCache = true;
+                }
+            }
+        }
+
+        if (siUneCaseEstCache){
+            boutonTelechargerListeChecked.setEnabled(true);
+        }
+        else {
+            boutonTelechargerListeChecked.setEnabled(false);
+        }
     }
 }

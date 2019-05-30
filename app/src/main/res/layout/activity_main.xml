@@ -22,6 +22,7 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/id_linear_layout_activity"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
@@ -44,13 +45,11 @@
 
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/imageView_image_afficher"
-                android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/id_btn_telecharger_list_view_items"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_launcher_background"
-                tools:layout_editor_absoluteX="141dp"
-                tools:layout_editor_absoluteY="326dp" />
+                android:text="Télécharger" />
 
             <ListView
                 android:id="@+id/listViewImage"
