@@ -20,6 +20,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Classe de notre service de téléchargement
@@ -27,6 +29,9 @@ import java.net.URL;
 public class NotreServiceDeTelechargement extends Service {
     private NotreServiceDeTelechargement.NotreBinder notreBinder = new NotreServiceDeTelechargement.NotreBinder();
     private MainActivity mainActivity;
+    private String nomDeFichier;
+    private HashMap<Bitmap, String> mapNomFichier;
+    private static final String EXTENSION = ".jpg";
 
     /**
      * Classe interne qui retourne la classe NotreServiceDeTelechargement
@@ -36,6 +41,7 @@ public class NotreServiceDeTelechargement extends Service {
 
         public NotreServiceDeTelechargement seConnecter(MainActivity activity) {
             mainActivity = activity;
+            mapNomFichier = new HashMap<>();
             return NotreServiceDeTelechargement.this;
         }
     }
@@ -55,7 +61,26 @@ public class NotreServiceDeTelechargement extends Service {
      * @param url est une chaine définissant l'url à de l'image à récupérer
      */
     public void executeUneTacheDeTelechargement(String url){
-        new NotreServiceDeTelechargement.DownloadTask().execute(stringToURL(url));
+        this.setNomDeFichier(url);
+        new NotreServiceDeTelechargement.DownloadTask(this.getNomDeFichier()).execute(stringToURL(url));
+    }
+
+    public String getNomDeFichier() {
+        return nomDeFichier;
+    }
+
+    public void setNomDeFichier(String nomDeFichier) {
+        nomDeFichier = nomDeFichier.replace("/", "");
+
+        if (nomDeFichier.length() >= 260){
+            nomDeFichier = nomDeFichier.substring(0, 250);
+        }
+
+        this.nomDeFichier = nomDeFichier;
+    }
+
+    public String getUrlDuBitmapConcerne(Bitmap bitmap){
+        return this.mapNomFichier.get(bitmap);
     }
 
     /**
@@ -81,7 +106,7 @@ public class NotreServiceDeTelechargement extends Service {
         ContextWrapper wrapper = new ContextWrapper(getApplicationContext());
 
         // Création du fichier de l'image à sauvegarder
-        File file = new File(Environment.getExternalStorageDirectory(), "UniqueFileName"+".jpg");
+        File file = new File(Environment.getExternalStorageDirectory(), this.mapNomFichier.get(bitmap) + EXTENSION);
 
         try{
             // Créer le flux de sortie du fichier
@@ -116,13 +141,25 @@ public class NotreServiceDeTelechargement extends Service {
      * Classe interne s'occupant du téléchargement de l'image de façon asynchrone
      */
     private class DownloadTask extends AsyncTask<URL,Void,Bitmap> {
+        private String nomFichier;
+
+        public DownloadTask(String nomFichier) {
+            this.nomFichier = nomFichier;
+        }
+
+        public String getNomFichier() {
+            return nomFichier;
+        }
+
+        public void setNomFichier(String nomFichier) {
+            this.nomFichier = nomFichier;
+        }
 
         /**
-         * Avant l'éxécution de la tâche, demande à l'activité d'affiché le loader.
+         * Avant l'éxécution de la tâche.
          */
         protected void onPreExecute(){
-            // Display the progress dialog on async task start
-            mainActivity.displayProcessus();
+            // Rien faire avant la tâche
         }
 
         /**
@@ -171,8 +208,11 @@ public class NotreServiceDeTelechargement extends Service {
 
         /**
          * Quand l'éxécution de la tâche est fini, demande à l'activité de finir le processus du loader.
+         * Permet de dire que maintenant l'activité peut sauver lier une image Uri à sa ImageView avec
+         * stopProcessus
          */
         protected void onPostExecute(Bitmap result){
+            mapNomFichier.put(result, getNomFichier());
             mainActivity.stopProcessus(result);
         }
 
