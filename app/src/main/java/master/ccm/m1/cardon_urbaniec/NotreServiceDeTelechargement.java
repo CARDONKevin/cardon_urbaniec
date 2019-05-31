@@ -156,11 +156,10 @@ public class NotreServiceDeTelechargement extends Service {
         }
 
         /**
-         * Avant l'éxécution de la tâche, demande à l'activité d'affiché le loader.
+         * Avant l'éxécution de la tâche.
          */
         protected void onPreExecute(){
-            // Display the progress dialog on async task start
-            // mainActivity.displayProcessus();
+            // Rien faire avant la tâche
         }
 
         /**
@@ -209,11 +208,12 @@ public class NotreServiceDeTelechargement extends Service {
 
         /**
          * Quand l'éxécution de la tâche est fini, demande à l'activité de finir le processus du loader.
+         * Permet de dire que maintenant l'activité peut sauver lier une image Uri à sa ImageView avec
+         * stopProcessus
          */
         protected void onPostExecute(Bitmap result){
             mapNomFichier.put(result, getNomFichier());
             mainActivity.stopProcessus(result);
-            //return saveImageToInternalStorage(result);
         }
 
     }
