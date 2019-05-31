@@ -18,7 +18,6 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -87,15 +86,6 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> monArrayAdapter = new ArrayAdapter(this, R.layout.descripteur_liste_image, R.id.tv_url_image, tableauChaines);
         listViewImage.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         listViewImage.setAdapter(monArrayAdapter);
-
-        listViewImage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String chaineSelectionnee = tableauChaines[position];
-                Toast.makeText(view.getContext(), chaineSelectionnee, Toast.LENGTH_LONG).show();
-
-            }
-        });
 
         boutonTelechargerListeChecked = findViewById(R.id.id_btn_telecharger_list_view_items);
         boutonTelechargerListeChecked.setEnabled(false);
@@ -183,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
         if (result != null) {
             // Sauvegarde l'image dans le stockage
             Uri imageInternalUri = this.notreServiceTelechargement.saveImageToInternalStorage(result);
-            Toast.makeText(this, "url : "+imageInternalUri.toString(), Toast.LENGTH_LONG).show();
             // affecte l'image télécharger
             ((ImageView) this.mapImageViewAppartenantUrl.get(notreServiceTelechargement.getUrlDuBitmapConcerne(result))).setImageURI(imageInternalUri);
         } else {
@@ -261,5 +250,13 @@ public class MainActivity extends AppCompatActivity {
         else {
             boutonTelechargerListeChecked.setEnabled(false);
         }
+    }
+
+    public void cliquerSurUnLayoutPourVoirImage(View view) {
+        Intent intent = new Intent(this, VoirImageActivite.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("UrlDeMonImageFormatString", ((TextView)((ViewGroup) view).getChildAt(1)).getText().toString());
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }
