@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
@@ -28,6 +29,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.HashMap;
 
 /**
@@ -134,6 +136,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        verifierSiImageDejaTelechargerAuDemarrage();
+    }
+
     /**
      * Instancie notre connexion à notre service
      */
@@ -148,6 +156,29 @@ public class MainActivity extends AppCompatActivity {
             notreServiceTelechargement = null;
         }
     };
+
+    public void verifierSiImageDejaTelechargerAuDemarrage(){
+        String url = "";
+        ListView notreLayout=  findViewById(R.id.listViewImage);
+        int count = notreLayout.getChildCount();
+
+        for (int i = 0; i < count; i++) {
+            View contenenurdeCheckBoxes = notreLayout.getChildAt(i);
+            TextView textBoxUrl = (TextView) ((ViewGroup) contenenurdeCheckBoxes).getChildAt(1);
+            url = textBoxUrl.getText().toString();
+            url = url.replace("/", "");
+
+            if (url.length() >= 260){
+                url = url.substring(0, 250);
+            }
+            if (new File(Environment.getExternalStorageDirectory().toString()+"/"+url+".jpg").exists()) {
+                //Toast.makeText(this, "file exist", Toast.LENGTH_LONG).show();
+                ((ImageView)((ViewGroup) contenenurdeCheckBoxes).getChildAt(0)).setImageURI(Uri.parse(Environment.getExternalStorageDirectory().toString()+"/"+url+".jpg"));
+                ((ViewGroup) contenenurdeCheckBoxes).getChildAt(2).setEnabled(false);
+            }
+        }
+
+    }
 
     public void actualiserMessageProgressDialog(){
         mProgressDialog.setMessage("Le téléchargement est en cours de traitement..." +
