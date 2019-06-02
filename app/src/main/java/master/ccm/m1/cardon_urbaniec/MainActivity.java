@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //suppresion du fichier pour un nouveau
-        //FileManager.writeErased(this);
+        FileManager.writeErased(this);
 
         mapImageViewAppartenantUrl = new HashMap<>();
         nombreATelecharger = 0;

@@ -27,9 +27,9 @@ public class FileManager {
             //on ouvre le fichier pour ecrire
 
 
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(NAMEFILE, Context.MODE_PRIVATE));
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(NAMEFILE, Context.MODE_APPEND));
             // on ajoute à la fin du fichier l'url en question
-            outputStreamWriter.write(data);
+            outputStreamWriter.append(data);
             outputStreamWriter.append(";");
             outputStreamWriter.close();
 
