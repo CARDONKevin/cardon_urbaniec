@@ -30,7 +30,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Activité principale de l'application
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView listViewImage;
     private Button boutonTelechargerListeChecked;
     private String[] tableauChaines;
+    private ArrayAdapter<String> monArrayAdapter;
     private int nombreATelecharger;
     private int nombreDejaTelecharger;
     private HashMap<String, ImageView> mapImageViewAppartenantUrl;
@@ -57,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FileManager.writeErased(this);
 
         mapImageViewAppartenantUrl = new HashMap<>();
         nombreATelecharger = 0;
@@ -82,12 +88,12 @@ public class MainActivity extends AppCompatActivity {
         listViewImage = findViewById(R.id.listViewImage);
 
         //récuperation des urls des image
-        tableauChaines = getResources().getStringArray(R.array.tableau_image);
-
+        //tableauChaines = getResources().getStringArray(R.array.tableau_image);
+        tableauChaines = FileManager.readFromFile(this);
         //adapter fais le lien entre la liste et le tableau d'image
-        ArrayAdapter<String> monArrayAdapter = new ArrayAdapter(this, R.layout.descripteur_liste_image, R.id.tv_url_image, tableauChaines);
+        //monArrayAdapter = new ArrayAdapter(this, R.layout.descripteur_liste_image, R.id.tv_url_image, tableauChaines);
         listViewImage.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        listViewImage.setAdapter(monArrayAdapter);
+        //listViewImage.setAdapter(monArrayAdapter);
 
         boutonTelechargerListeChecked = findViewById(R.id.id_btn_telecharger_list_view_items);
         boutonTelechargerListeChecked.setEnabled(false);
@@ -112,6 +118,32 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }});
+
+
+        // test ajout dans le fichier avant
+        //FileManager.writeToFile("https://uploads2.yugioh.com/card_images/1787/detail/2785.jpg?1385102370",this);
+        //FileManager.writeToFile("http://uploads1.yugioh.com/card_images/275/detail/Kuriboh.jpg?1375127846",this);
+        //récuperation des urls des image
+        //tableauChaines =  getResources().getStringArray(R.array.tableau_image);
+        tableauChaines = FileManager.readFromFile(this);
+        //adapter fais le lien entre la liste et le tableau d'image
+        if(tableauChaines.length != 0){
+            if(tableauChaines[0].equals("")){
+                // test ajout dans le fichier avant
+                sauvegardeFichier("https://uploads2.yugioh.com/card_images/1787/detail/2785.jpg?1385102370");
+                sauvegardeFichier("http://uploads1.yugioh.com/card_images/275/detail/Kuriboh.jpg?1375127846");
+
+                listViewImage.setAdapter(monArrayAdapter);
+
+            }else {
+                monArrayAdapter = new ArrayAdapter<String>(this, R.layout.descripteur_liste_image, R.id.tv_url_image, tableauChaines);
+
+                listViewImage.setAdapter(monArrayAdapter);
+                }
+
+
+        }
+
     }
 
 
@@ -227,7 +259,10 @@ public class MainActivity extends AppCompatActivity {
      * @param view est un objet View
      */
     public void DemanderTelechargement(View view) {
-        this.notreServiceTelechargement.executeUneTacheDeTelechargement(editText.getText().toString());
+
+        sauvegardeFichier(editText.getText().toString());
+        //this.notreServiceTelechargement.executeUneTacheDeTelechargement(editText.getText().toString());
+
     }
 
     public void DemanderTelechargementItemListView(View view) {
@@ -289,5 +324,17 @@ public class MainActivity extends AppCompatActivity {
         bundle.putString("UrlDeMonImageFormatString", ((TextView)((ViewGroup) view).getChildAt(1)).getText().toString());
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+    //sauvegarde les données dans un fichier text
+    public void sauvegardeFichier(String chaineUrl) {
+        FileManager.writeToFile(chaineUrl,this);
+        MJListeView();
+    }
+
+    //met à jour la listeView
+    public void MJListeView() {
+        tableauChaines = FileManager.readFromFile(this);
+        monArrayAdapter = new ArrayAdapter<String>(this, R.layout.descripteur_liste_image, R.id.tv_url_image, tableauChaines);
+        listViewImage.setAdapter(monArrayAdapter);
     }
 }
