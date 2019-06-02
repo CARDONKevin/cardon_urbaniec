@@ -26,10 +26,9 @@ public class FileManager {
         try {
             //on ouvre le fichier pour ecrire
 
-
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(NAMEFILE, Context.MODE_APPEND));
             // on ajoute à la fin du fichier l'url en question
-            outputStreamWriter.append(data);
+            outputStreamWriter.write(data);
             outputStreamWriter.append(";");
             outputStreamWriter.close();
 
@@ -64,27 +63,15 @@ public class FileManager {
                 String receiveString ;
                 String stringBuilder ="" ;
                 while ( (receiveString = bufferedReader.readLine()) != null ) {
-                    Log.i("Remi_LOG", "stringBuilder : " + receiveString);
+
                     stringBuilder += receiveString;
 
 
                 }
-
+                //on ajoute un séparateur
                 ret=stringBuilder.split(";");
-                Log.i("Remi_LOG", "length ret : " + ret.length);
-                //bufferedReader.close();
+
                 inputStream.close();
-                /*
-
-                ArrayList<String> stringTabBuilder = new ArrayList<String>();
-
-                ret = new String[stringTabBuilder.size()];
-                int x = 0;
-                for (String uneChaine : stringTabBuilder)
-                {
-                    ret[x] = uneChaine;
-                    x++;
-                }*/
 
             }
         }

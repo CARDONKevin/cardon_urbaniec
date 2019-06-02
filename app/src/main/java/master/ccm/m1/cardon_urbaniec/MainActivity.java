@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //suppresion du fichier pour un nouveau
         FileManager.writeErased(this);
 
         mapImageViewAppartenantUrl = new HashMap<>();
@@ -122,21 +121,27 @@ public class MainActivity extends AppCompatActivity {
 
 
         // test ajout dans le fichier avant
-        FileManager.writeToFile("https://uploads2.yugioh.com/card_images/1787/detail/2785.jpg?1385102370",this);
-        FileManager.writeToFile("http://uploads1.yugioh.com/card_images/275/detail/Kuriboh.jpg?1375127846",this);
+        //FileManager.writeToFile("https://uploads2.yugioh.com/card_images/1787/detail/2785.jpg?1385102370",this);
+        //FileManager.writeToFile("http://uploads1.yugioh.com/card_images/275/detail/Kuriboh.jpg?1375127846",this);
         //récuperation des urls des image
         //tableauChaines =  getResources().getStringArray(R.array.tableau_image);
         tableauChaines = FileManager.readFromFile(this);
         //adapter fais le lien entre la liste et le tableau d'image
         if(tableauChaines.length != 0){
-            Log.i("Remi_LOG", "length : " + tableauChaines.length);
-            Log.i("Remi_LOG", "Valeurstr : " + tableauChaines[0] );
-            //Log.i("Remi_LOG", "Valeurstr : " + tableauChaines[0] + " / " + tableauChaines[1]);
+            if(tableauChaines[0].equals("")){
+                // test ajout dans le fichier avant
+                sauvegardeFichier("https://uploads2.yugioh.com/card_images/1787/detail/2785.jpg?1385102370");
+                sauvegardeFichier("http://uploads1.yugioh.com/card_images/275/detail/Kuriboh.jpg?1375127846");
+
+                listViewImage.setAdapter(monArrayAdapter);
+
+            }else {
+                monArrayAdapter = new ArrayAdapter<String>(this, R.layout.descripteur_liste_image, R.id.tv_url_image, tableauChaines);
+
+                listViewImage.setAdapter(monArrayAdapter);
+                }
 
 
-            monArrayAdapter = new ArrayAdapter<String>(this, R.layout.descripteur_liste_image, R.id.tv_url_image, tableauChaines);
-
-            listViewImage.setAdapter(monArrayAdapter);
         }
 
     }
@@ -254,8 +259,9 @@ public class MainActivity extends AppCompatActivity {
      * @param view est un objet View
      */
     public void DemanderTelechargement(View view) {
+
         sauvegardeFichier(editText.getText().toString());
-        this.notreServiceTelechargement.executeUneTacheDeTelechargement(editText.getText().toString());
+        //this.notreServiceTelechargement.executeUneTacheDeTelechargement(editText.getText().toString());
 
     }
 
