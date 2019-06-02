@@ -62,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FileManager.writeErased(this);
-
         mapImageViewAppartenantUrl = new HashMap<>();
         nombreATelecharger = 0;
         nombreDejaTelecharger = 0;
@@ -254,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Demande le téléchargement au clic sur le bouton télécharger
+     * Demande le l'ajout d'une URL
      * Utilise la valeur de l'url pour le téléchargement
      * @param view est un objet View
      */
